@@ -14,12 +14,21 @@ export default function Home() {
     fetch('/api/cities')
       .then(response => response.json())
       .then(data => {
-        console.log(data)
+        // console.log(data)
         if(typeof data === 'object')
           setSingleCity(true)
         setCitiesData(data)
       })
   }, [])
+
+  useEffect(() => {
+    fetch('/api/jobs')
+      .then(response => response.json())
+      .then(data => {
+        console.log(data)
+      })
+  }, [])
+
 
   const handleJobTitle= (e) => setJobTitle(e.target.value)
 
@@ -52,11 +61,11 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className=' flex form'>
-          <MDBInput label='Job Title' className='input' type='text' value={jobTitle} onChange={e => handleJobTitle(e)} contrast />
-          <MDBInput label='Current Location' className='input' type='text' value={currentLocation} onChange={e => handleCurrentLocation(e)} contrast />
+          <MDBInput label='Job Title' className='input' type='text' value={jobTitle} onChange={e => handleJobTitle(e)} contrast='true' />
+          <MDBInput label='Current Location' className='input' type='text' value={currentLocation} onChange={e => handleCurrentLocation(e)} contrast='true' />
           <MDBDropdown animation>
-            <MDBDropdownToggle contrast>{livingType || 'Living Type'}</MDBDropdownToggle>
-            <MDBDropdownMenu contrast>
+            <MDBDropdownToggle contrast='true'>{livingType || 'Living Type'}</MDBDropdownToggle>
+            <MDBDropdownMenu contrast='true'>
               <MDBDropdownItem link onClick={e => handleLivingType(e)}>Rent</MDBDropdownItem>
               <MDBDropdownItem link onClick={e => handleLivingType(e)}>Buy</MDBDropdownItem>
               <MDBDropdownItem link onClick={e => handleLivingType(e)}>Lease</MDBDropdownItem>
