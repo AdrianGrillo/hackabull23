@@ -113,10 +113,18 @@ a {
 
 .form {
   width: 100%;
+  height: 15vh;
   justify-content: center;
   align-items: center;
 
   > * {
     margin: 0 10px;
   }
+}
+
+.data {
+  width: 100vw;
+  height: 85vh;
+  background: orange;
+  margin: 0;
 }
