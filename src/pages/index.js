@@ -1,14 +1,30 @@
-import Head from 'next/head'
-import styles from '@/styles/Home.module.scss'
-import { MDBInput, MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit'
-import { useState, useEffect } from 'react'
-import COLTable from './COLTable'
-import {cityData} from 'cityData.js'
+import Head from "next/head";
+import styles from "@/styles/Home.module.scss";
+import {
+  Autocomplete,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Box
+} from "@mui/material";
+import {
+  MDBInput,
+  MDBDropdown,
+  MDBDropdownMenu,
+  MDBDropdownToggle,
+  MDBDropdownItem,
+} from "mdb-react-ui-kit";
+import { useState, useEffect } from "react";
+import COLTable from "./COLTable";
+import { cityData } from "./api/cityData";
+import GoogleMaps from "./GooglePlace";
 
 export default function Home() {
-  const [jobTitle, setJobTitle] = useState('')
-  const [currentLocation, setCurrentLocation] = useState('')
-  const [livingType, setLivingType] = useState('')
+  const [jobTitle, setJobTitle] = useState("");
+  const [currentLocation, setCurrentLocation] = useState("");
+  const [livingType, setLivingType] = useState("");
   // const [citiesData, setCitiesData] = useState([])
 
   // useEffect(() => {
@@ -20,11 +36,19 @@ export default function Home() {
   //     })
   // }, [])
 
-  const handleJobTitle= (e) => setJobTitle(e.target.value)
+  const handleJobTitle = (e) => setJobTitle(e.target.value);
 
-  const handleCurrentLocation= (e) => setCurrentLocation(e.target.value)
+  const handleCurrentLocation = (e) => setCurrentLocation(e);
 
-  const handleLivingType= (e) => setLivingType(e.target.textContent)
+  const handleLivingType = (e) => setLivingType(e.target.value);
+
+  const defaultProps = {
+    options: cityData,
+    getOptionLabel: (option) => option.title,
+  };
+  const flatProps = {
+    options: cityData.map((option) => option.name),
+  };
 
   return (
     <>
@@ -35,23 +59,56 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div className=' flex form'>
-          <MDBInput label='Job Title' className='input' type='text' value={jobTitle} onChange={e => handleJobTitle(e)} />
-          <MDBInput label='Current Location' className='input' type='text' value={currentLocation} onChange={e => handleCurrentLocation(e)} />
-          <MDBDropdown animation>
-            <MDBDropdownToggle>{livingType || 'Living Type'}</MDBDropdownToggle>
+        <div className=" flex form">
+        <Box sx={{ minWidth: 200 }}> 
+          <TextField
+            label="Job Title"
+            className="input"
+            type="text"
+            value={jobTitle}
+            onChange={(e) => handleJobTitle(e)}
+          />
+          </Box>
+          <Box sx={{ minWidth: 200 }}>
+            <GoogleMaps setCurrentLocation={setCurrentLocation}/>
+            {console.log(currentLocation)}
+          </Box>
+          <Box sx={{ minWidth: 200 }}>
+            <FormControl fullWidth>
+              <InputLabel id="living-label">Home Type</InputLabel>
+              <Select
+                labelId="living-label"
+                value={livingType}
+                label="Home Type"
+                onChange={(e) => handleLivingType(e)}
+              >
+                <MenuItem value={1}>Rent</MenuItem>
+                <MenuItem value={2}>Buy</MenuItem>
+                <MenuItem value={3}>Lease</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
+
+          {/* <MDBDropdown animation>
+            <MDBDropdownToggle>{livingType || "Living Type"}</MDBDropdownToggle>
             <MDBDropdownMenu>
-              <MDBDropdownItem link onClick={e => handleLivingType(e)}>Rent</MDBDropdownItem>
-              <MDBDropdownItem link onClick={e => handleLivingType(e)}>Buy</MDBDropdownItem>
-              <MDBDropdownItem link onClick={e => handleLivingType(e)}>Lease</MDBDropdownItem>
+              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
+                Rent
+              </MDBDropdownItem>
+              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
+                Buy
+              </MDBDropdownItem>
+              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
+                Lease
+              </MDBDropdownItem>
             </MDBDropdownMenu>
-          </MDBDropdown>
+          </MDBDropdown> */}
         </div>
-        <div className='data'>
+        <div className="data">
           <h1>Cities</h1>
-          <COLTable userCity={currentLocation}/>
+          {/* <COLTable userCity={currentLocation} /> */}
         </div>
       </main>
     </>
-  )
+  );
 }

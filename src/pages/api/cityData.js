@@ -1,4 +1,4 @@
-const cityData = [
+export const cityData = [
     {
       "id": 2213,
       "country": "united-states",
@@ -9999,6 +9999,4 @@ const cityData = [
       "url": "/country/united-states/city/mission-tx/cost-of-living",
       "iso3": "usa"
     }
-  ]
-
-export default cityData;
+  ];
