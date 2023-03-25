@@ -18,9 +18,13 @@
     "mdb-react-ui-kit": "^5.1.0",
     "mdbreact": "^5.2.0",
     "next": "13.2.4",
+    "pg": "^8.10.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "sass": "^1.60.0",
     "scss": "^0.2.4"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.2"
   }
 }
