@@ -1,40 +1,43 @@
 import Head from "next/head";
 import styles from "@/styles/Home.module.scss";
-import {
-  Autocomplete,
-  TextField,
-  Select,
-  MenuItem,
-  InputLabel,
-  FormControl,
-  Box
-} from "@mui/material";
-import {
-  MDBInput,
-  MDBDropdown,
-  MDBDropdownMenu,
-  MDBDropdownToggle,
-  MDBDropdownItem,
-} from "mdb-react-ui-kit";
 import { useState, useEffect } from "react";
 import COLTable from "./COLTable";
 import { cityData } from "./api/cityData";
-import GoogleMaps from "./GooglePlace";
+import JobSearch from "./JobSearch";
 
 export default function Home() {
   const [jobTitle, setJobTitle] = useState("");
   const [currentLocation, setCurrentLocation] = useState("");
   const [livingType, setLivingType] = useState("");
-  // const [citiesData, setCitiesData] = useState([])
+  const [citiesData, setCitiesData] = useState([]);
+  const [singleCity, setSingleCity] = useState(false);
 
-  // useEffect(() => {
-  //   fetch('/api/cities')
-  //     .then(response => response.json())
-  //     .then(data => {
-  //       console.log(data)
-  //       setCitiesData(data)
-  //     })
-  // }, [])
+  useEffect(() => {
+    fetch("/api/cities")
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        if (typeof data === "object") setSingleCity(true);
+        setCitiesData(data);
+      });
+  }, []);
+
+  const renderList = (items) => (
+    <ul>
+      {items.map((item, index) => (
+        <li key={index}>
+          {item.Cost}: {item.Value}
+        </li>
+      ))}
+    </ul>
+  );
+
+  const renderSection = (title, items) => (
+    <div>
+      <h3>{title}</h3>
+      {renderList(items)}
+    </div>
+  );
 
   const handleJobTitle = (e) => setJobTitle(e.target.value);
 
@@ -60,53 +63,67 @@ export default function Home() {
       </Head>
       <main className={styles.main}>
         <div className=" flex form">
-        <Box sx={{ minWidth: 200 }}> 
-          <TextField
-            label="Job Title"
-            className="input"
-            type="text"
-            value={jobTitle}
-            onChange={(e) => handleJobTitle(e)}
+          <JobSearch
+            setJob={setJobTitle}
+            setLoc={setCurrentLocation}
+            setLiv={setLivingType}
           />
-          </Box>
-          <Box sx={{ minWidth: 200 }}>
-            <GoogleMaps setCurrentLocation={setCurrentLocation}/>
-            {console.log(currentLocation)}
-          </Box>
-          <Box sx={{ minWidth: 200 }}>
-            <FormControl fullWidth>
-              <InputLabel id="living-label">Home Type</InputLabel>
-              <Select
-                labelId="living-label"
-                value={livingType}
-                label="Home Type"
-                onChange={(e) => handleLivingType(e)}
-              >
-                <MenuItem value={1}>Rent</MenuItem>
-                <MenuItem value={2}>Buy</MenuItem>
-                <MenuItem value={3}>Lease</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-
-          {/* <MDBDropdown animation>
-            <MDBDropdownToggle>{livingType || "Living Type"}</MDBDropdownToggle>
-            <MDBDropdownMenu>
-              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
-                Rent
-              </MDBDropdownItem>
-              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
-                Buy
-              </MDBDropdownItem>
-              <MDBDropdownItem link onClick={(e) => handleLivingType(e)}>
-                Lease
-              </MDBDropdownItem>
-            </MDBDropdownMenu>
-          </MDBDropdown> */}
         </div>
         <div className="data">
           <h1>Cities</h1>
-          {/* <COLTable userCity={currentLocation} /> */}
+          {singleCity ? (
+            <div>
+              <h2>
+                City: {citiesData["City Name"]}, {citiesData["Country Name"]}
+              </h2>
+              <h3>Currency: {citiesData.Currency}</h3>
+              <h4>
+                Cost of Living Month Total:{" "}
+                {citiesData["Cost of Living Month Total"]}
+              </h4>
+              <h4>Note: {citiesData.Note}</h4>
+
+              {renderSection(
+                "Buy Apartment Prices",
+                citiesData["Buy Apartment prices"]
+              )}
+              {renderSection(
+                "Childcare Prices",
+                citiesData["Childcare prices"]
+              )}
+              {renderSection(
+                "Clothing And Shoes Prices",
+                citiesData["Clothing And Shoes prices"]
+              )}
+              {renderSection("Markets Prices", citiesData["Markets prices"])}
+              {renderSection(
+                "Rent Per Month Prices",
+                citiesData["Rent Per Month prices"]
+              )}
+              {renderSection(
+                "Restaurants Prices",
+                citiesData["Restaurants prices"]
+              )}
+              {renderSection(
+                "Salaries And Financing Prices",
+                citiesData["Salaries And Financing prices"]
+              )}
+              {renderSection(
+                "Sports And Leisure Prices",
+                citiesData["Sports And Leisure prices"]
+              )}
+              {renderSection(
+                "Transportation Prices",
+                citiesData["Transportation prices"]
+              )}
+              {renderSection(
+                "Utilities Per Month Prices",
+                citiesData["Utilities Per Month prices"]
+              )}
+            </div>
+          ) : (
+            "Multiple cities"
+          )}
         </div>
       </main>
     </>
