@@ -14,10 +14,10 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-        <div class=' flex form'>
-          <MDBInput label='Your Salary' class='input' type='text' />
-          <MDBInput label='Your Desired Rent Cost' class='input' type='text' />
-          <MDBInput label='Your Desired COL' class='input' type='text' />
+        <div className=' flex form'>
+          <MDBInput label='Your Salary' className='input' type='text' />
+          <MDBInput label='Your Desired Rent Cost' className='input' type='text' />
+          <MDBInput label='Your Desired COL' className='input' type='text' />
         </div>
       </main>
     </>
