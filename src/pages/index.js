@@ -88,7 +88,8 @@ export default function Home() {
             : 'Multiple cities'
           }
         </div>
+        {/* <JobSearch/> */}
       </main>
     </>
-  )
+  );
 }
