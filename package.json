@@ -19,5 +19,8 @@
     "react-dom": "18.2.0",
     "sass": "^1.60.0",
     "scss": "^0.2.4"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.2"
   }
 }
