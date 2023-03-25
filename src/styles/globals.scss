@@ -82,18 +82,12 @@
 html,
 body {
   max-width: 100vw;
-  overflow-x: hidden;
 }
 
 body {
   font-family: Roboto, Helvetica, Arial, sans-serif;
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+  background: #022c43 !important;
+  color: #ffd700 !important;
 }
 
 a {
@@ -123,8 +117,9 @@ a {
 }
 
 .data {
-  width: 95vw;
+  width: 100vw;
   height: 85vh;
-  background: orange;
-  padding: 10px;
+  padding: 10vw;
+  margin: 0;
+  color: rgb(226, 226, 226);
 }
