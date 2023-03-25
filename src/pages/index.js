@@ -2,21 +2,23 @@ import Head from 'next/head'
 import styles from '@/styles/Home.module.scss'
 import { MDBInput, MDBDropdown, MDBDropdownMenu, MDBDropdownToggle, MDBDropdownItem } from 'mdb-react-ui-kit'
 import { useState, useEffect } from 'react'
+import COLTable from './COLTable'
+import {cityData} from 'cityData.js'
 
 export default function Home() {
   const [jobTitle, setJobTitle] = useState('')
   const [currentLocation, setCurrentLocation] = useState('')
   const [livingType, setLivingType] = useState('')
-  const [citiesData, setCitiesData] = useState([])
+  // const [citiesData, setCitiesData] = useState([])
 
-  useEffect(() => {
-    fetch('/api/cities')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-        setCitiesData(data)
-      })
-  }, [])
+  // useEffect(() => {
+  //   fetch('/api/cities')
+  //     .then(response => response.json())
+  //     .then(data => {
+  //       console.log(data)
+  //       setCitiesData(data)
+  //     })
+  // }, [])
 
   const handleJobTitle= (e) => setJobTitle(e.target.value)
 
@@ -47,13 +49,7 @@ export default function Home() {
         </div>
         <div className='data'>
           <h1>Cities</h1>
-          <ul>
-            {/* {citiesData.map((city, index) => (
-              <li key={index}>
-                {city.name} - Cost of Living: {city.cost_of_living}
-              </li>
-            ))} */}
-          </ul>
+          <COLTable userCity={currentLocation}/>
         </div>
       </main>
     </>
