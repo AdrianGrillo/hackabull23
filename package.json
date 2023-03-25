@@ -9,6 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "mdb-react-ui-kit": "^5.1.0",
+    "mdbreact": "^5.2.0",
     "next": "13.2.4",
     "react": "18.2.0",
     "react-dom": "18.2.0"
