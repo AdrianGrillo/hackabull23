@@ -14,7 +14,7 @@ export default function JobSearch({ setJob, setLoc, setLiv }) {
   const [currentLocation, setCurrentLocation] = useState("");
   const [livingType, setLivingType] = useState("");
   const handleJobTitle = (e) => {
-    setJobTitle(e.target.value)
+    setJobTitle(e.target.value);
     setJob(e.target.value);
   };
 
@@ -28,12 +28,36 @@ export default function JobSearch({ setJob, setLoc, setLiv }) {
     setLiv(e.target.textContent);
   };
 
+  const inputStyle = {
+    backgroundColor: "#022c43",
+    color: "#ffd700",
+    "& .MuiOutlinedInput-notchedOutline": {
+      borderColor: "white",
+    },
+    "& .MuiSelect-icon": {
+      color: "#ffd700",
+    },
+    "& .MuiMenu-paper": {
+      backgroundColor: "rgba(0, 0, 0, 0.8)",
+    },
+    "& .MuiMenuItem-root": {
+      color: "#ffd700",
+    },
+  };
+
   return (
-    <div className="flex form">
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        width: "100%",
+        marginBottom: 2,
+      }}
+    >
       <Box sx={{ minWidth: 200 }}>
         <TextField
           label="Job Title"
-          className="input"
+          sx={[{ color: "#ffd700", width: "100%"}, inputStyle]}
           type="text"
           value={jobTitle}
           onChange={(e) => handleJobTitle(e)}
@@ -41,15 +65,17 @@ export default function JobSearch({ setJob, setLoc, setLiv }) {
       </Box>
       <Box sx={{ minWidth: 200 }}>
         <GoogleMaps setCurrentLocation={setCurrentLocation} />
-        {console.log(currentLocation)}
       </Box>
       <Box sx={{ minWidth: 200 }}>
         <FormControl fullWidth>
-          <InputLabel id="living-label">Home Type</InputLabel>
+          <InputLabel sx={{ color: "#ffd700" }} id="living-label">
+            Home Type
+          </InputLabel>
           <Select
             labelId="living-label"
             value={livingType}
             label="Home Type"
+            sx={inputStyle}
             onChange={(e) => handleLivingType(e)}
           >
             <MenuItem value={1}>Rent</MenuItem>
@@ -58,6 +84,6 @@ export default function JobSearch({ setJob, setLoc, setLiv }) {
           </Select>
         </FormControl>
       </Box>
-    </div>
+    </Box>
   );
 }
