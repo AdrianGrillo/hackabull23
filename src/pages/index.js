@@ -50,7 +50,7 @@ export default function Home() {
         console.log(data)
       })
   }, [])
-  
+
   const renderList = (items) => (
     <ul>
       {items.map((item, index) => (
@@ -66,13 +66,13 @@ export default function Home() {
     </div>
   );
 
-  const defaultProps = {
-    options: cityData,
-    getOptionLabel: (option) => option.title,
-  };
-  const flatProps = {
-    options: cityData.map((option) => option.name),
-  };
+  // const defaultProps = {
+  //   options: citiesData,
+  //   getOptionLabel: (option) => option.title,
+  // };
+  // const flatProps = {
+  //   options: citiesData.map((option) => option.name),
+  // };
 
   return (
     <>
