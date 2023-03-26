@@ -105,6 +105,14 @@ a {
   display: flex;
 }
 
+.row {
+  flex-direction: row;
+}
+
+.column {
+  flex-direction: column;
+}
+
 .form {
   width: 100%;
   height: 15vh;
@@ -116,10 +124,33 @@ a {
   }
 }
 
+Button {
+  height: 57px;
+}
+
+.city-data {
+  width: 100%;
+  justify-content: space-between;
+}
+
 .data {
   width: 100vw;
-  height: 85vh;
-  padding: 10vw;
+  align-items: center;
+  padding:  0 10vw 10vw 10vw;
   margin: 0;
   color: rgb(226, 226, 226);
+}
+
+.cards-container {
+  max-width: 1000px;
+}
+
+.card-container {
+  background: #8d8d8d;
+}
+
+.card {
+  background: #8d8d8d !important;
+  color: #000;
+  height: 400px;
 }

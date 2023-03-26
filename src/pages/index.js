@@ -9,6 +9,11 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { pink, yellow } from '@mui/material/colors';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import MenuItem from '@mui/material/MenuItem';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import { Grid, Card, CardContent, Typography } from '@mui/material';
 
 const theme = createTheme({
   components: {
@@ -25,37 +30,73 @@ const theme = createTheme({
   },
 });
 
+const states = [
+  'al', 'ak', 'az', 'ar', 'ca', 'co', 'ct', 'de', 'fl', 'ga',
+  'hi', 'id', 'il', 'in', 'ia', 'ks', 'ky', 'la', 'me', 'md',
+  'ma', 'mi', 'mn', 'ms', 'mo', 'mt', 'ne', 'nv', 'nh', 'nj',
+  'nm', 'ny', 'nc', 'nd', 'oh', 'ok', 'or', 'pa', 'ri', 'sc',
+  'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy',
+];
+
 export default function Home() {
-  const [jobTitle, setJobTitle] = useState('')
-  const [currentLocation, setCurrentLocation] = useState('')
-  const [livingType, setLivingType] = useState('')
-  const [citiesData, setCitiesData] = useState([])
-  const [singleCity, setSingleCity] = useState(false)
+  const [city1Data, setCity1Data] = useState([])
+  const [city2Data, setCity2Data] = useState([])
+  const [jobsData, setJobsData] = useState([])
+  const [city1Input, setCity1Input] = useState('')  
+  const [city2Input, setCity2Input] = useState('')  
+  const [city1State, setCity1State] = useState('');
+  const [city2State, setCity2State] = useState('');
+  const [functionSelected, setFunctionSelected] = useState('col')
+  const [jobInput, setJobInput] = useState('')
 
-  useEffect(() => {
-    fetch('/api/cities')
+  const handleJobInput = e => setJobInput(e.target.value)
+
+  const handleCity1Input = e => setCity1Input(e.target.value)
+
+  const handleCity2Input = e => setCity2Input(e.target.value)
+
+  const handleCity1State = e => setCity1State(e.target.value);
+
+  const handleCity2State = e => setCity2State(e.target.value);
+
+  const fetchCityData = () => {
+    if(!city1Input || !city2Input || !city1State)
+      return
+
+    setCity1Data([])
+    const city1 = city1Input.toLowerCase() + '-' + city1State
+    fetch(`/api/cities?city=${city1}`)
+    .then(response => response.json())
+    .then(data => {
+      setCity1Data(data)
+    })
+
+    setCity2Data([])
+    const city2 = city2Input.toLowerCase() + '-' + city2State
+    fetch(`/api/cities?city=${city2}`)
+    .then(response => response.json())
+    .then(data => {
+      console.log(data)
+      setCity2Data(data)
+    })
+  }
+
+  const fetchJobData = () => {
+    if(!jobInput || !city1State)
+      return
+
+    fetch(`/api/jobs?keywords=${jobInput}&location=${city1State.toLowerCase()}`)
       .then(response => response.json())
-      .then(data => {
-        // console.log(data)
-        if(typeof data === 'object')
-          setSingleCity(true)
-        setCitiesData(data)
-      })
-  }, [])
+      .then(data => setJobsData(data.jobs))
+  }
 
-  useEffect(() => {
-    fetch('/api/jobs')
-      .then(response => response.json())
-      .then(data => {
-        console.log(data)
-      })
-  }, [])
+  const handleFunctionSelected = val => setFunctionSelected(val)
 
-  const renderList = (items) => (
+  const renderList = items => (
     <ul>
-      {items.map((item, index) => (
+      {items ? items.map((item, index) => (
         <li key={index}>{item.Cost}: {item.Value}</li>
-      ))}
+      )) : null}
     </ul>
   );
 
@@ -66,13 +107,12 @@ export default function Home() {
     </div>
   );
 
-  // const defaultProps = {
-  //   options: citiesData,
-  //   getOptionLabel: (option) => option.title,
-  // };
-  // const flatProps = {
-  //   options: citiesData.map((option) => option.name),
-  // };
+  const clearInputs = () => {
+    setCity1Input('')
+    setCity2Input('')
+    setCity1State('')
+    setCity2State('')
+  }
 
   return (
     <>
@@ -83,51 +123,205 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
-      <ThemeProvider theme={theme}>
-        <div>
-        <FormControl>
-          <FormLabel style={{ color: '#ffd700' }}>Query</FormLabel>
-          <RadioGroup row>
-            <FormControlLabel value="col" control={<Radio />} label="CoL Index" defaultChecked='true' />
-            <FormControlLabel value="jobs" control={<Radio />} label="Job Postings" />
-          </RadioGroup>
-        </FormControl>
-        </div>
-          <div className=' flex form'>
-            <MDBInput label='Job Title' className='input' type='text' value={jobTitle} onChange={e => handleJobTitle(e)} contrast='true' />
-            <MDBInput label='Current Location' className='input' type='text' value={currentLocation} onChange={e => handleCurrentLocation(e)} contrast='true' />
-            <MDBDropdown animation>
-              <MDBDropdownToggle contrast='true'>{livingType || 'Living Type'}</MDBDropdownToggle>
-              <MDBDropdownMenu contrast='true'>
-                <MDBDropdownItem link onClick={e => handleLivingType(e)}>Rent</MDBDropdownItem>
-                <MDBDropdownItem link onClick={e => handleLivingType(e)}>Buy</MDBDropdownItem>
-                <MDBDropdownItem link onClick={e => handleLivingType(e)}>Lease</MDBDropdownItem>
-              </MDBDropdownMenu>
-            </MDBDropdown>
+        <ThemeProvider theme={theme}>
+          <div className='flex column form'>
+            <FormControl>
+              <RadioGroup row defaultValue={'col'}>
+                <FormControlLabel value="col" control={<Radio />} label="CoL Index" defaultChecked onClick={() => { clearInputs(), handleFunctionSelected('col') }} />
+                <FormControlLabel value="jobs" control={<Radio />} label="Job Postings" onClick={() => { clearInputs(), handleFunctionSelected('jobs') }} />
+              </RadioGroup>
+            </FormControl>
+            <div className='flex form'>
+              {
+                functionSelected === 'col'
+                ? 
+                  <div className='flex'>
+                    <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter city one' className='input' type='text' value={city1Input} onChange={e => handleCity1Input(e)} contrast='true' />
+                    <div style={{margin: '0 10px' }}></div>
+                    <FormControl style={{ width: 150 }}>
+                      <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
+                      <Select
+                        value={city1State}
+                        onChange={e => handleCity1State(e)}
+                        label="State"
+                        sx={{
+                          backgroundColor: '#022c43',
+                          color: '#ffd700',
+                          '& .MuiOutlinedInput-notchedOutline': {
+                            borderColor: 'white',
+                          },
+                          '& .MuiSelect-icon': {
+                            color: '#ffd700',
+                          },
+                          '& .MuiMenu-paper': {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                          },
+                          '& .MuiMenuItem-root': {
+                            color: '#ffd700'
+                          },
+                        }}
+                      >
+                        {states.map((state) => (
+                          <MenuItem key={state} value={state}>
+                            {state}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                    <div style={{margin: '0 10px' }}></div>
+                    <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter city two' className='input' type='text' value={city2Input} onChange={e => handleCity2Input(e)} contrast='true' />
+                    { functionSelected === 'jobs'
+                      ?
+                      <FormControl style={{ width: 150 }}>
+                        <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
+                        <Select
+                          value={city1State}
+                          onChange={e => handleCity1State(e)}
+                          label="State"
+                          sx={{
+                            backgroundColor: '#022c43',
+                            color: '#ffd700',
+                            '& .MuiOutlinedInput-notchedOutline': {
+                              borderColor: 'white',
+                            },
+                            '& .MuiSelect-icon': {
+                              color: '#ffd700',
+                            },
+                            '& .MuiMenu-paper': {
+                              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            },
+                            '& .MuiMenuItem-root': {
+                              color: '#ffd700'
+                            },
+                          }}
+                        >
+                          {states.map((state) => (
+                            <MenuItem key={state} value={state}>
+                              {state}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
+                      : null
+                    }
+                  </div>
+                : <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter a job' className='input' type='text' value={jobInput} onChange={e => handleJobInput(e)} contrast='true' />
+              }
+              <FormControl style={{ width: 150 }}>
+                <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
+                <Select
+                  value={city2State}
+                  onChange={e => handleCity2State(e)}
+                  label="State"
+                  sx={{
+                    backgroundColor: '#022c43',
+                    color: '#ffd700',
+                    '& .MuiOutlinedInput-notchedOutline': {
+                      borderColor: 'white',
+                    },
+                    '& .MuiSelect-icon': {
+                      color: '#ffd700',
+                    },
+                    '& .MuiMenu-paper': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                    },
+                    '& .MuiMenuItem-root': {
+                      color: '#ffd700'
+                    },
+                  }}
+                >
+                  {states.map((state) => (
+                    <MenuItem key={state} value={state}>
+                      {state}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
+              {
+                functionSelected === 'col'
+                ? <Button variant="outlined" onClick={() => fetchCityData()}>Search</Button>
+                : <Button variant="outlined" onClick={() => fetchJobData()}>Search</Button>
+              }
+            </div>
           </div>
-          <div className='data'>
-            <h1>Cities</h1>
-            { 
-              singleCity
-              ? 
-              <div>
-                <h2>City: {citiesData["City Name"]}, {citiesData["Country Name"]}</h2>
-                <h3>Currency: {citiesData.Currency}</h3>
-                <h4>Cost of Living Month Total: {citiesData["Cost of Living Month Total"]}</h4>
-                <h4>Note: {citiesData.Note}</h4>
-          
-                {renderSection("Buy Apartment Prices", citiesData["Buy Apartment prices"])}
-                {renderSection("Childcare Prices", citiesData["Childcare prices"])}
-                {renderSection("Clothing And Shoes Prices", citiesData["Clothing And Shoes prices"])}
-                {renderSection("Markets Prices", citiesData["Markets prices"])}
-                {renderSection("Rent Per Month Prices", citiesData["Rent Per Month prices"])}
-                {renderSection("Restaurants Prices", citiesData["Restaurants prices"])}
-                {renderSection("Salaries And Financing Prices", citiesData["Salaries And Financing prices"])}
-                {renderSection("Sports And Leisure Prices", citiesData["Sports And Leisure prices"])}
-                {renderSection("Transportation Prices", citiesData["Transportation prices"])}
-                {renderSection("Utilities Per Month Prices", citiesData["Utilities Per Month prices"])}
-              </div>
-              : 'Multiple cities'
+          <div className='flex column data'>
+            <div className='flex city-data'>
+              { 
+                functionSelected === 'col'
+                ? 
+                  <div>
+                    <h2>City: {city1Data["City Name"]}, {city1Data["Country Name"]}</h2>
+                    <h3>Currency: {city1Data.Currency}</h3>
+                    <h4>Cost of Living Month Total: {city1Data["Cost of Living Month Total"]}</h4>
+                    <h4>Note: {city1Data.Note}</h4>
+              
+                    {renderSection("Buy Apartment Prices", city1Data["Buy Apartment prices"])}
+                    {renderSection("Childcare Prices", city1Data["Childcare prices"])}
+                    {renderSection("Clothing And Shoes Prices", city1Data["Clothing And Shoes prices"])}
+                    {renderSection("Markets Prices", city1Data["Markets prices"])}
+                    {renderSection("Rent Per Month Prices", city1Data["Rent Per Month prices"])}
+                    {renderSection("Restaurants Prices", city1Data["Restaurants prices"])}
+                    {renderSection("Salaries And Financing Prices", city1Data["Salaries And Financing prices"])}
+                    {renderSection("Sports And Leisure Prices", city1Data["Sports And Leisure prices"])}
+                    {renderSection("Transportation Prices", city1Data["Transportation prices"])}
+                    {renderSection("Utilities Per Month Prices", city1Data["Utilities Per Month prices"])}
+                  </div>
+                : null
+              }
+              {
+                city2Data != []
+                ?
+                  <div>
+                    <h2>City: {city2Data["City Name"]}, {city2Data["Country Name"]}</h2>
+                    <h3>Currency: {city2Data.Currency}</h3>
+                    <h4>Cost of Living Month Total: {city2Data["Cost of Living Month Total"]}</h4>
+                    <h4>Note: {city2Data.Note}</h4>
+              
+                    {renderSection("Buy Apartment Prices", city2Data["Buy Apartment prices"])}
+                    {renderSection("Childcare Prices", city2Data["Childcare prices"])}
+                    {renderSection("Clothing And Shoes Prices", city2Data["Clothing And Shoes prices"])}
+                    {renderSection("Markets Prices", city2Data["Markets prices"])}
+                    {renderSection("Rent Per Month Prices", city2Data["Rent Per Month prices"])}
+                    {renderSection("Restaurants Prices", city2Data["Restaurants prices"])}
+                    {renderSection("Salaries And Financing Prices", city2Data["Salaries And Financing prices"])}
+                    {renderSection("Sports And Leisure Prices", city2Data["Sports And Leisure prices"])}
+                    {renderSection("Transportation Prices", city2Data["Transportation prices"])}
+                    {renderSection("Utilities Per Month Prices", city2Data["Utilities Per Month prices"])}
+                  </div>
+                : null
+              }
+            </div>
+            {
+              functionSelected === 'jobs'
+              ? <Grid className='cards-container' container spacing={2}>
+                {jobsData.map((job, index) => (
+                  <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
+                    <Card className='card-container'>
+                      <CardContent className='card'>
+                        <Typography gutterBottom variant="h5" component="h2" style={{fontSize: '16px', fontWeight: 600}}>
+                          Title: {job.title}
+                        </Typography>
+                        <Typography variant="body2" color="textSecondary" component="p">
+                          Location: {job.location}
+                        </Typography>
+                        <Typography variant="body1" component="p" dangerouslySetInnerHTML={{ __html: job.snippet.slice(0, 150) }}>
+                        </Typography>
+                        { 
+                          job.company
+                          ? <Typography variant="body2" color="textSecondary" component="p">
+                              Company: {job.company}
+                            </Typography>
+                          : null
+                        }
+                        <Typography variant="body2" color="textSecondary" component="p">
+                          Posting: <a href={job.link}>{ job.link}</a>
+                        </Typography>
+                      </CardContent>
+                    </Card>
+                  </Grid>
+                ))}
+              </Grid>
+            : null
             }
           </div>
         </ThemeProvider>
