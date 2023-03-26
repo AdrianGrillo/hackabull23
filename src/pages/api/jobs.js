@@ -1,11 +1,13 @@
 import fetch from 'node-fetch';
 
 export default async (req, res) => {
+  const { keywords, location } = req.query;
+
   const apiUrl = 'https://jooble.org/api/';
   const key = '2dc943f5-3f44-4d93-8700-e03348d48e31';
   const params = {
-    keywords: 'truck driver',
-    location: 'kansas city',
+    keywords,
+    location
   };
 
   try {
