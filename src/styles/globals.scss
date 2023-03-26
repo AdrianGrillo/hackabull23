@@ -146,11 +146,17 @@ Button {
 }
 
 .card-container {
-  background: #8d8d8d;
+  background: rgb(226,226,226)  ;
+  border: 1px solid #ffd700;
 }
 
 .card {
-  background: #8d8d8d !important;
+  background: rgb(226,226,226);
   color: #000;
   height: 400px;
+}
+
+.title {
+  text-align: center;
+  background: #284b66;
 }

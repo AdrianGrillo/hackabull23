@@ -14,6 +14,15 @@ import MenuItem from '@mui/material/MenuItem';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import { Grid, Card, CardContent, Typography } from '@mui/material';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
+import React from 'react'
+import GoogleMaps from './GooglePlace';
 
 const theme = createTheme({
   components: {
@@ -28,6 +37,9 @@ const theme = createTheme({
       },
     },
   },
+  typography: {
+    fontFamily: 'Roboto, Arial, sans-serif',
+  },
 });
 
 const states = [
@@ -38,9 +50,20 @@ const states = [
   'sd', 'tn', 'tx', 'ut', 'vt', 'va', 'wa', 'wv', 'wi', 'wy',
 ];
 
+const sections = [
+  "Buy Apartment prices",
+  "Childcare prices",
+  "Clothing And Shoes prices",
+  "Markets prices",
+  "Rent Per Month prices",
+  "Restaurants prices",
+  "Salaries And Financing prices",
+  "Sports And Leisure prices",
+  "Transportation prices",
+  "Utilities Per Month prices",
+];
+
 export default function Home() {
-  const [city1Data, setCity1Data] = useState([])
-  const [city2Data, setCity2Data] = useState([])
   const [jobsData, setJobsData] = useState([])
   const [city1Input, setCity1Input] = useState('')  
   const [city2Input, setCity2Input] = useState('')  
@@ -48,6 +71,9 @@ export default function Home() {
   const [city2State, setCity2State] = useState('');
   const [functionSelected, setFunctionSelected] = useState('col')
   const [jobInput, setJobInput] = useState('')
+  const [searchDone, setSearchDone] = useState(false)
+  const [city1DataTransformed, setCity1DataTransformed] = useState([])
+  const [city2DataTransformed, setCity2DataTransformed] = useState([])
 
   const handleJobInput = e => setJobInput(e.target.value)
 
@@ -55,42 +81,65 @@ export default function Home() {
 
   const handleCity2Input = e => setCity2Input(e.target.value)
 
-  const handleCity1State = e => setCity1State(e.target.value);
-
-  const handleCity2State = e => setCity2State(e.target.value);
+  const handleFunctionSelected = val => setFunctionSelected(val)
 
   const fetchCityData = () => {
-    if(!city1Input || !city2Input || !city1State)
+    if(!city1Input || !city2Input)
       return
 
-    setCity1Data([])
-    const city1 = city1Input.toLowerCase() + '-' + city1State
+    setCity1DataTransformed([])
+    const city1 = formatString(city1Input)
     fetch(`/api/cities?city=${city1}`)
     .then(response => response.json())
     .then(data => {
-      setCity1Data(data)
+      setCity1DataTransformed(transformData(data))
     })
 
-    setCity2Data([])
-    const city2 = city2Input.toLowerCase() + '-' + city2State
+    setCity2DataTransformed([])
+    const city2 = formatString(city2Input)
     fetch(`/api/cities?city=${city2}`)
     .then(response => response.json())
     .then(data => {
       console.log(data)
-      setCity2Data(data)
+      setCity2DataTransformed(transformData(data))
     })
+
+    setSearchDone(true)
   }
 
   const fetchJobData = () => {
-    if(!jobInput || !city1State)
+    if(!jobInput || !city2State)
       return
+      
+    const city2 = formatString(city2State)
 
-    fetch(`/api/jobs?keywords=${jobInput}&location=${city1State.toLowerCase()}`)
+    fetch(`/api/jobs?keywords=${jobInput}&location=${city2}`)
       .then(response => response.json())
       .then(data => setJobsData(data.jobs))
   }
 
-  const handleFunctionSelected = val => setFunctionSelected(val)
+  const transformData = data => {
+    const transformedData = {};
+    Object.keys(data)
+      .forEach((key) => {
+        if (Array.isArray(data[key])) {
+          transformedData[key] = {};
+          data[key].forEach((item) => {
+            transformedData[key][item.Cost] = item.Value;
+          });
+        } else {
+          transformedData[key] = data[key];
+        }
+      });
+    return transformedData;
+  };
+
+  function formatString(input) {
+    const [cityName, state, country] = input.split(', ');
+    const formattedCityName = cityName.replace(/\s+/g, '-').toLowerCase();
+    const formattedState = state.toLowerCase();
+    return `${formattedCityName}-${formattedState}`;
+  }
 
   const renderList = items => (
     <ul>
@@ -136,107 +185,17 @@ export default function Home() {
                 functionSelected === 'col'
                 ? 
                   <div className='flex'>
-                    <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter city one' className='input' type='text' value={city1Input} onChange={e => handleCity1Input(e)} contrast='true' />
-                    <div style={{margin: '0 10px' }}></div>
-                    <FormControl style={{ width: 150 }}>
-                      <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
-                      <Select
-                        value={city1State}
-                        onChange={e => handleCity1State(e)}
-                        label="State"
-                        sx={{
-                          backgroundColor: '#022c43',
-                          color: '#ffd700',
-                          '& .MuiOutlinedInput-notchedOutline': {
-                            borderColor: 'white',
-                          },
-                          '& .MuiSelect-icon': {
-                            color: '#ffd700',
-                          },
-                          '& .MuiMenu-paper': {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                          },
-                          '& .MuiMenuItem-root': {
-                            color: '#ffd700'
-                          },
-                        }}
-                      >
-                        {states.map((state) => (
-                          <MenuItem key={state} value={state}>
-                            {state}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                    <div style={{margin: '0 10px' }}></div>
-                    <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter city two' className='input' type='text' value={city2Input} onChange={e => handleCity2Input(e)} contrast='true' />
-                    { functionSelected === 'jobs'
-                      ?
-                      <FormControl style={{ width: 150 }}>
-                        <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
-                        <Select
-                          value={city1State}
-                          onChange={e => handleCity1State(e)}
-                          label="State"
-                          sx={{
-                            backgroundColor: '#022c43',
-                            color: '#ffd700',
-                            '& .MuiOutlinedInput-notchedOutline': {
-                              borderColor: 'white',
-                            },
-                            '& .MuiSelect-icon': {
-                              color: '#ffd700',
-                            },
-                            '& .MuiMenu-paper': {
-                              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            },
-                            '& .MuiMenuItem-root': {
-                              color: '#ffd700'
-                            },
-                          }}
-                        >
-                          {states.map((state) => (
-                            <MenuItem key={state} value={state}>
-                              {state}
-                            </MenuItem>
-                          ))}
-                        </Select>
-                      </FormControl>
-                      : null
-                    }
+                    <GoogleMaps setCurrentLocation={setCity1Input} />
+                    <div style={{ marginLeft: 10, marginRight: 10 }}></div>
+                    <GoogleMaps setCurrentLocation={setCity2Input} />
                   </div>
-                : <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter a job' className='input' type='text' value={jobInput} onChange={e => handleJobInput(e)} contrast='true' />
+                : 
+                <div className='flex'>
+                  <MDBInput style={{ height: 55, color: '#ffd700' }} label='Enter a job' className='input' type='text' value={jobInput} onChange={e => handleJobInput(e)} contrast='true' />
+                  <div style={{ marginLeft: 10, marginRight: 10 }}></div>
+                  <GoogleMaps setCurrentLocation={setCity2State} />
+                </div>
               }
-              <FormControl style={{ width: 150 }}>
-                <InputLabel htmlFor="outlined-state-native-simple" style={{ color: 'white'}}>State</InputLabel>
-                <Select
-                  value={city2State}
-                  onChange={e => handleCity2State(e)}
-                  label="State"
-                  sx={{
-                    backgroundColor: '#022c43',
-                    color: '#ffd700',
-                    '& .MuiOutlinedInput-notchedOutline': {
-                      borderColor: 'white',
-                    },
-                    '& .MuiSelect-icon': {
-                      color: '#ffd700',
-                    },
-                    '& .MuiMenu-paper': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                    },
-                    '& .MuiMenuItem-root': {
-                      color: '#ffd700'
-                    },
-                  }}
-                >
-                  {states.map((state) => (
-                    <MenuItem key={state} value={state}>
-                      {state}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
               {
                 functionSelected === 'col'
                 ? <Button variant="outlined" onClick={() => fetchCityData()}>Search</Button>
@@ -246,48 +205,49 @@ export default function Home() {
           </div>
           <div className='flex column data'>
             <div className='flex city-data'>
-              { 
-                functionSelected === 'col'
-                ? 
-                  <div>
-                    <h2>City: {city1Data["City Name"]}, {city1Data["Country Name"]}</h2>
-                    <h3>Currency: {city1Data.Currency}</h3>
-                    <h4>Cost of Living Month Total: {city1Data["Cost of Living Month Total"]}</h4>
-                    <h4>Note: {city1Data.Note}</h4>
-              
-                    {renderSection("Buy Apartment Prices", city1Data["Buy Apartment prices"])}
-                    {renderSection("Childcare Prices", city1Data["Childcare prices"])}
-                    {renderSection("Clothing And Shoes Prices", city1Data["Clothing And Shoes prices"])}
-                    {renderSection("Markets Prices", city1Data["Markets prices"])}
-                    {renderSection("Rent Per Month Prices", city1Data["Rent Per Month prices"])}
-                    {renderSection("Restaurants Prices", city1Data["Restaurants prices"])}
-                    {renderSection("Salaries And Financing Prices", city1Data["Salaries And Financing prices"])}
-                    {renderSection("Sports And Leisure Prices", city1Data["Sports And Leisure prices"])}
-                    {renderSection("Transportation Prices", city1Data["Transportation prices"])}
-                    {renderSection("Utilities Per Month Prices", city1Data["Utilities Per Month prices"])}
-                  </div>
-                : null
-              }
               {
-                city2Data != []
+                searchDone && functionSelected === 'col' && city1DataTransformed && city2DataTransformed
                 ?
-                  <div>
-                    <h2>City: {city2Data["City Name"]}, {city2Data["Country Name"]}</h2>
-                    <h3>Currency: {city2Data.Currency}</h3>
-                    <h4>Cost of Living Month Total: {city2Data["Cost of Living Month Total"]}</h4>
-                    <h4>Note: {city2Data.Note}</h4>
-              
-                    {renderSection("Buy Apartment Prices", city2Data["Buy Apartment prices"])}
-                    {renderSection("Childcare Prices", city2Data["Childcare prices"])}
-                    {renderSection("Clothing And Shoes Prices", city2Data["Clothing And Shoes prices"])}
-                    {renderSection("Markets Prices", city2Data["Markets prices"])}
-                    {renderSection("Rent Per Month Prices", city2Data["Rent Per Month prices"])}
-                    {renderSection("Restaurants Prices", city2Data["Restaurants prices"])}
-                    {renderSection("Salaries And Financing Prices", city2Data["Salaries And Financing prices"])}
-                    {renderSection("Sports And Leisure Prices", city2Data["Sports And Leisure prices"])}
-                    {renderSection("Transportation Prices", city2Data["Transportation prices"])}
-                    {renderSection("Utilities Per Month Prices", city2Data["Utilities Per Month prices"])}
-                  </div>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650, border: '1px solid', borderColor: '#ffd700', background: 'rgb(226,226,226)' }} aria-label="city comparison table">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell>Description</TableCell>
+                        <TableCell align="center">{city1DataTransformed["City Name"]}, {city1DataTransformed["Country Name"]}</TableCell>
+                        <TableCell align="center">{city2DataTransformed["City Name"]}, {city2DataTransformed["Country Name"]}</TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                    {sections.map((section, sectionIndex) => (
+                      city1DataTransformed[section] && city2DataTransformed[section] ? (
+                        <React.Fragment key={sectionIndex}>
+                          <TableRow sx={{ background: "#f0f0f0" }}>
+                            <TableCell sx={{ background: '#022c43', color: 'white' }} colSpan={3}>
+                              <strong>{section}</strong>
+                            </TableCell>
+                          </TableRow>
+                          {Object.entries(city1DataTransformed[section]).map(([key, value], index) => (
+                            <TableRow
+                              key={key}
+                              sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                            >
+                              <TableCell component="th" scope="row">
+                                {key}
+                              </TableCell>
+                              <TableCell align="center">
+                                {value} {city1DataTransformed.Currency}
+                              </TableCell>
+                              <TableCell align="center">
+                                {city2DataTransformed[section][key]} {city2DataTransformed.Currency}
+                              </TableCell>
+                            </TableRow>
+                          ))}
+                        </React.Fragment>
+                      ) : null
+                    ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
                 : null
               }
             </div>
@@ -298,23 +258,23 @@ export default function Home() {
                   <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
                     <Card className='card-container'>
                       <CardContent className='card'>
-                        <Typography gutterBottom variant="h5" component="h2" style={{fontSize: '16px', fontWeight: 600}}>
+                        <Typography className='title' gutterBottom variant="h5" component="h2" style={{fontSize: '16px', fontWeight: 600, color: '#ffd700 ', marginTop: -16, marginLeft: -16, marginRight: -16, minHeight: 50, display: 'flex', justifyContent: 'space-around', alignItems: 'center', padding: 5, borderBottom: '1px solid black'}}>
                           Title: {job.title}
                         </Typography>
-                        <Typography variant="body2" color="textSecondary" component="p">
-                          Location: {job.location}
+                        <Typography variant="body2" color="#000" component="p" style={{ marginBottom: 5 }}>
+                          <b>Location: </b>{job.location}
                         </Typography>
                         <Typography variant="body1" component="p" dangerouslySetInnerHTML={{ __html: job.snippet.slice(0, 150) }}>
                         </Typography>
                         { 
                           job.company
-                          ? <Typography variant="body2" color="textSecondary" component="p">
-                              Company: {job.company}
+                          ? <Typography variant="body2" color="#000" component="p" style={{ marginBottom: 5 }}>
+                              <b>Company: </b>{job.company}
                             </Typography>
                           : null
                         }
-                        <Typography variant="body2" color="textSecondary" component="p">
-                          Posting: <a href={job.link}>{ job.link}</a>
+                        <Typography variant="body2" color="#000" component="p" style={{ marginBottom: 5 }}>
+                          <b>Posting: </b><a href={job.link}>{ job.link}</a>
                         </Typography>
                       </CardContent>
                     </Card>

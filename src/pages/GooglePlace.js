@@ -111,7 +111,33 @@ export default function GoogleMaps({setCurrentLocation}) {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Add a location" fullWidth />
+        <TextField   
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              backgroundColor: '#022c43',
+            },
+            '& .MuiOutlinedInput-input': {
+              color: '#ffd700',
+            },
+            '& .MuiOutlinedInput-notchedOutline': {
+              borderColor: 'white',
+            },
+            '& .MuiInputLabel-root': {
+              color: '#ffd700',
+            },
+            '& .MuiSelect-icon': {
+              color: '#ffd700',
+            },
+            '& .MuiMenu-paper': {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+            },
+            '& .MuiMenuItem-root': {
+              color: '#ffd700',
+            },
+          }} 
+          {...params} 
+          label="Add a location" 
+          fullWidth />
       )}
       renderOption={(props, option) => {
         const matches =
@@ -124,7 +150,7 @@ export default function GoogleMaps({setCurrentLocation}) {
 
         return (
           <li {...props}>
-            <Grid container alignItems="center">
+            <Grid container alignItems="center" >
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />
               </Grid>
