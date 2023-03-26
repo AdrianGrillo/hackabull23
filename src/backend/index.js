@@ -2,26 +2,24 @@ const express = require('express');
 const { Client } = require('pg');
 const fetch = require('node-fetch');
 const { default: cities } = require('@/pages/api/cities');
+const { default: cities } = require('@/pages/api/cities');
 const app = express();
 
 const DATABASE_URL = 'postgresql://master:BAESOAJl2xY2_ZvZHgrIPw@hackabull23-9761.7tt.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full'
 const client = new Client(DATABASE_URL)
 client.connect();
 
-const city = 'tampa-fl'
-
 // test city
 const city = 'tampa-fl'
 
-// insert data if not in database
-async function insertData(citycity) {
+async function insertData(city, state) {
     const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
-[city.split("-")[0], city.split("-")[1]]
+[city, state]
   );
   if (res.rows[0].count > 0) {
     return;
   }
-    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}&city=${city}`, {
+    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}`, {
         headers: {
             'Authorization': 'Bearer 1031|Cz5i9bS9RqlZNApWSMNzwHcpiQB2LgyXKoWDApoq'
         }
@@ -57,7 +55,6 @@ app.get('/', async (req, res) => {
         res.sendStatus(500);
     }
 });
-  
 
 app.listen(3001, () => {
     console.log('Server is listening on port 3001');
