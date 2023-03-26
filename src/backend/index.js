@@ -8,18 +8,20 @@ const DATABASE_URL = 'postgresql://master:BAESOAJl2xY2_ZvZHgrIPw@hackabull23-976
 const client = new Client(DATABASE_URL)
 client.connect();
 
+const city = 'tampa-fl'
+
 // test city
 const city = 'tampa-fl'
 
 // insert data if not in database
-async function insertData(city) {
+async function insertData(citycity) {
     const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
 [city.split("-")[0], city.split("-")[1]]
   );
   if (res.rows[0].count > 0) {
     return;
   }
-    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}`, {
+    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}&city=${city}`, {
         headers: {
             'Authorization': 'Bearer 1031|Cz5i9bS9RqlZNApWSMNzwHcpiQB2LgyXKoWDApoq'
         }
