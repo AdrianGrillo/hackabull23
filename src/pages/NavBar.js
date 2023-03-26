@@ -25,7 +25,7 @@ const NavBar = () => {
   const menuId = "account-menu";
 
   return (
-    <AppBar position="absolute">
+    <AppBar position="absolute" sx={{  }}>
       <Toolbar>
         <nav>
           <Link href="/" passHref>

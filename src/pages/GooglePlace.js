@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import { debounce } from '@mui/material/utils';
+import theme from '@/styles/text-field-style';
 
 // Move this to a env variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD6_WzijFKeIPkaaDvmN8MK1rXwaOBiE3U';
@@ -112,29 +113,7 @@ export default function GoogleMaps({setCurrentLocation}) {
       }}
       renderInput={(params) => (
         <TextField   
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              backgroundColor: '#022c43',
-            },
-            '& .MuiOutlinedInput-input': {
-              color: '#ffd700',
-            },
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: 'white',
-            },
-            '& .MuiInputLabel-root': {
-              color: '#ffd700',
-            },
-            '& .MuiSelect-icon': {
-              color: '#ffd700',
-            },
-            '& .MuiMenu-paper': {
-              backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            },
-            '& .MuiMenuItem-root': {
-              color: '#ffd700',
-            },
-          }} 
+          sx={theme} 
           {...params} 
           label="Add a location" 
           fullWidth />
