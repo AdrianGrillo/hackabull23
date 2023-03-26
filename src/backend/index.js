@@ -55,6 +55,7 @@ app.get('/', async (req, res) => {
         res.sendStatus(500);
     }
 });
+  
 
 app.listen(3001, () => {
     console.log('Server is listening on port 3001');
