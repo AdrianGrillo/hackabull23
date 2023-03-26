@@ -2,7 +2,6 @@ const express = require('express');
 const { Client } = require('pg');
 const fetch = require('node-fetch');
 const { default: cities } = require('@/pages/api/cities');
-const { default: cities } = require('@/pages/api/cities');
 const app = express();
 
 const DATABASE_URL = 'postgresql://master:BAESOAJl2xY2_ZvZHgrIPw@hackabull23-9761.7tt.cockroachlabs.cloud:26257/defaultdb?sslmode=verify-full'
@@ -13,9 +12,9 @@ client.connect();
 const city = 'tampa-fl'
 
 // insert data if not in database
-async function insertData(city, state) {
+async function insertData(city) {
     const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
-[city, state]
+[city.split("-")[0], city.split("-")[1]]
   );
   if (res.rows[0].count > 0) {
     return;
