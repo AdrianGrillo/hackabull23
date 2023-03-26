@@ -11,6 +11,7 @@ client.connect();
 // test city
 const city = 'tampa-fl'
 
+// insert data if not in database
 async function insertData(city, state) {
     const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
 [city, state]
