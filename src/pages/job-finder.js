@@ -1,26 +1,26 @@
-import Head from "next/head";
-import styles from "@/styles/Home.module.scss";
-import { MDBInput } from "mdb-react-ui-kit";
 import { useState, useEffect } from "react";
-import { Radio, Container, Box, Link, TextField } from "@mui/material";
-import RadioGroup from "@mui/material/RadioGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
-import { pink, yellow } from "@mui/material/colors";
-import { createTheme, ThemeProvider } from "@mui/material/styles";
+import {
+  Radio,
+  Container,
+  Box,
+  TextField,
+  RadioGroup,
+  FormControlLabel,
+  FormControl,
+  Grid,
+  Card,
+  CardContent,
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Link,
+} from "@mui/material";
 import Button from "@mui/material/Button";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import { Grid, Card, CardContent, Typography } from "@mui/material";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
 import React from "react";
 import GoogleMaps from "./GooglePlace";
 import theme from "@/styles/text-field-style";
@@ -141,7 +141,13 @@ export default function Home() {
 
     fetch(`/api/jobs?keywords=${jobInput}&location=${city2}`)
       .then((response) => response.json())
-      .then((data) => setJobsData(data.jobs));
+      .then((data) => {
+        let jobs = data.jobs;
+        // Manipulate job data here
+        console.log(jobs);
+
+        setJobsData(jobs);
+      });
   };
 
   const transformData = (data) => {
@@ -184,6 +190,16 @@ export default function Home() {
       {renderList(items)}
     </div>
   );
+
+  const stripHtmlTags = (str) => {
+    if (str === null || str === '') return false;
+    else str = str.toString();
+    str = str.replace(/<[^>]*>/g, '');
+    str = str.replace(/&nbsp;.../g, ' ');
+    str = str.trim();
+    return str;
+  };
+  
 
   const clearInputs = () => {
     setCity1Input("");
@@ -237,7 +253,7 @@ export default function Home() {
             ) : (
               <div className="flex">
                 <TextField
-                  sx={[{minWidth: 300}, theme]}
+                  sx={[{ minWidth: 300 }, theme]}
                   label="Enter a job"
                   className="input"
                   type="text"
@@ -334,68 +350,66 @@ export default function Home() {
             ) : null}
           </div>
           {functionSelected === "jobs" ? (
-            <Grid className="cards-container" container spacing={2}>
+            <Grid container spacing={2}>
               {jobsData.map((job, index) => (
                 <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                  <Card className="card-container">
-                    <CardContent className="card">
+                  <Card sx={{ width: 375, height: 400}}>
+                    <CardContent>
                       <Typography
-                        className="title"
-                        gutterBottom
                         variant="h5"
-                        component="h2"
-                        style={{
+                        component="div"
+                        gutterBottom
+                        sx={{
                           fontSize: "16px",
                           fontWeight: 600,
-                          color: "#ffd700 ",
-                          marginTop: -16,
-                          marginLeft: -16,
-                          marginRight: -16,
-                          minHeight: 50,
-                          display: "flex",
-                          justifyContent: "space-around",
-                          alignItems: "center",
-                          padding: 5,
+                          color: "#ffd700",
                           borderBottom: "1px solid black",
+                          py: 1,
                         }}
                       >
-                        Title: {job.title}
+                        {job.title}
                       </Typography>
                       <Typography
                         variant="body2"
-                        color="#000"
-                        component="p"
-                        style={{ marginBottom: 5 }}
+                        sx={{
+                          mb: 1,
+                        }}
                       >
                         <b>Location: </b>
                         {job.location}
                       </Typography>
                       <Typography
                         variant="body1"
-                        component="p"
-                        dangerouslySetInnerHTML={{
-                          __html: job.snippet.slice(0, 150),
-                        }}
-                      ></Typography>
-                      {job.company ? (
+                        component="div"
+                      >{stripHtmlTags(job.snippet.slice(0, 150))}</Typography>
+                      {console.log(job.snippet)}
+                      {job.company && (
                         <Typography
                           variant="body2"
-                          color="#000"
-                          component="p"
-                          style={{ marginBottom: 5 }}
+                          sx={{
+                            mb: 1,
+                          }}
                         >
                           <b>Company: </b>
                           {job.company}
                         </Typography>
-                      ) : null}
+                      )}
                       <Typography
                         variant="body2"
-                        color="#000"
-                        component="p"
-                        style={{ marginBottom: 5 }}
+                        sx={{
+                          mb: 1,
+                        }}
                       >
                         <b>Posting: </b>
-                        <a href={job.link}>{job.link}</a>
+                        <nav>
+                          <Link
+                            href={job.link}
+                            underline="hover"
+                            target="_blank"
+                          >
+                            {job.link}
+                          </Link>
+                        </nav>
                       </Typography>
                     </CardContent>
                   </Card>
