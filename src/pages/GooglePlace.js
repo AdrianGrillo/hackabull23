@@ -106,7 +106,9 @@ export default function GoogleMaps({setCurrentLocation}) {
       onChange={(event, newValue) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
-        setCurrentLocation(newValue.description);
+        if(newValue.description) {
+          setCurrentLocation(newValue.description);
+        }
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
