@@ -50,14 +50,7 @@ export default function Home() {
         console.log(data)
       })
   }, [])
-
-
-  const handleJobTitle= (e) => setJobTitle(e.target.value)
-
-  const handleCurrentLocation= (e) => setCurrentLocation(e.target.value)
-
-  const handleLivingType= (e) => setLivingType(e.target.textContent)
-
+  
   const renderList = (items) => (
     <ul>
       {items.map((item, index) => (
@@ -72,6 +65,14 @@ export default function Home() {
       {renderList(items)}
     </div>
   );
+
+  const defaultProps = {
+    options: cityData,
+    getOptionLabel: (option) => option.title,
+  };
+  const flatProps = {
+    options: cityData.map((option) => option.name),
+  };
 
   return (
     <>
@@ -132,5 +133,5 @@ export default function Home() {
         </ThemeProvider>
       </main>
     </>
-  )
+  );
 }
