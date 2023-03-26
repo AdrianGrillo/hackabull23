@@ -7,8 +7,10 @@ const DATABASE_URL = 'postgresql://master:BAESOAJl2xY2_ZvZHgrIPw@hackabull23-976
 const client = new Client(DATABASE_URL)
 client.connect();
 
-async function insertData() {
-    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states`, {
+const city = 'tampa-fl'
+
+async function insertData(city) {
+    const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}`, {
         headers: {
             'Authorization': 'Bearer 1031|Cz5i9bS9RqlZNApWSMNzwHcpiQB2LgyXKoWDApoq'
         }
@@ -29,7 +31,7 @@ async function insertData() {
   
 app.get('/', async (req, res) => {
     try {
-        await insertData();
+        await insertData(city);
         client.query('SELECT * FROM cities', (err, result) => {
             if (err) {
                 console.error(err);
