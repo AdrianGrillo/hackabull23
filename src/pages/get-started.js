@@ -69,7 +69,7 @@ const GetStartedPage = () => {
           minHeight: "100vh",
           justifyContent: "center",
           textAlign: "center",
-          padding: 4,
+          paddingTop: 8,
         }}
       >
         <Typography
@@ -103,7 +103,6 @@ const GetStartedPage = () => {
               flexDirection: "column",
               alignItems: "center",
               width: "100%",
-              animation: `${fadeIn} 1.5s ease-in`,
             }}
           >
             <TextField

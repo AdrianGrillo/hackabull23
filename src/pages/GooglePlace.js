@@ -7,6 +7,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import parse from 'autosuggest-highlight/parse';
 import { debounce } from '@mui/material/utils';
+import theme from '@/styles/text-field-style';
 
 // Move this to a env variable
 const GOOGLE_MAPS_API_KEY = 'AIzaSyD6_WzijFKeIPkaaDvmN8MK1rXwaOBiE3U';
@@ -105,13 +106,19 @@ export default function GoogleMaps({setCurrentLocation}) {
       onChange={(event, newValue) => {
         setOptions(newValue ? [newValue, ...options] : options);
         setValue(newValue);
-        setCurrentLocation(newValue.description);
+        if(newValue.description) {
+          setCurrentLocation(newValue.description);
+        }
       }}
       onInputChange={(event, newInputValue) => {
         setInputValue(newInputValue);
       }}
       renderInput={(params) => (
-        <TextField {...params} label="Add a location" fullWidth />
+        <TextField   
+          sx={theme} 
+          {...params} 
+          label="Add a location" 
+          fullWidth />
       )}
       renderOption={(props, option) => {
         const matches =
@@ -124,7 +131,7 @@ export default function GoogleMaps({setCurrentLocation}) {
 
         return (
           <li {...props}>
-            <Grid container alignItems="center">
+            <Grid container alignItems="center" >
               <Grid item sx={{ display: 'flex', width: 44 }}>
                 <LocationOnIcon sx={{ color: 'text.secondary' }} />
               </Grid>

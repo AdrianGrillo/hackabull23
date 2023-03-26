@@ -1,21 +1,26 @@
 import { yellow } from "@mui/material/colors";
 
 const theme = {
-  color: yellow[500],
-  "& .MuiInputBase-input": {
-    color: yellow[500],
+  "& .MuiOutlinedInput-root": {
+    backgroundColor: "#022c43",
   },
-  "& .MuiInput-underline:before": {
-    borderBottomColor: yellow[500],
+  "& .MuiOutlinedInput-input": {
+    color: "#ffd700",
   },
-  "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-    borderBottomColor: yellow[500],
-  },
-  "& .MuiInput-underline:after": {
-    borderBottomColor: yellow[500],
+  "& .MuiOutlinedInput-notchedOutline": {
+    borderColor: "white",
   },
   "& .MuiInputLabel-root": {
-    color: yellow[500],
+    color: "#ffd700",
+  },
+  "& .MuiSelect-icon": {
+    color: "#ffd700",
+  },
+  "& .MuiMenu-paper": {
+    backgroundColor: "rgba(0, 0, 0, 0.8)",
+  },
+  "& .MuiMenuItem-root": {
+    color: "#ffd700",
   },
 };
 
