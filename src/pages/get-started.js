@@ -237,5 +237,3 @@ const GetStartedPage = () => {
 };
 
 export default GetStartedPage;
-
-
