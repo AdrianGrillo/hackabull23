@@ -86,19 +86,9 @@ export default function Home() {
     <div>
       <div>
         <FormControl>
-          <FormLabel style={{ color: "#ffd700" }}>Query</FormLabel>
-          <RadioGroup row>
-            <FormControlLabel
-              value="col"
-              control={<Radio />}
-              label="CoL Index"
-              defaultChecked="true"
-            />
-            <FormControlLabel
-              value="jobs"
-              control={<Radio />}
-              label="Job Postings"
-            />
+          <RadioGroup row defaultValue={'col'}>
+            <FormControlLabel value="col" control={<Radio />} label="CoL Index" defaultChecked onClick={() => { handleFunctionSelected('col'), clearInputs() }} />
+            <FormControlLabel value="jobs" control={<Radio />} label="Job Postings" onClick={() => { handleFunctionSelected('jobs'), clearInputs() }} />
           </RadioGroup>
         </FormControl>
       </div>
