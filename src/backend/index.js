@@ -12,9 +12,9 @@ client.connect();
 const city = 'tampa-fl'
 
 // insert data if not in database
-async function insertData(city, state) {
+async function insertData(city) {
     const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
-[city, state]
+[city.split("-")[0], city.split("-")[1]]
   );
   if (res.rows[0].count > 0) {
     return;
@@ -37,6 +37,7 @@ async function insertData(city, state) {
         console.log('Data inserted successfully');
     });
 }
+
   
 app.get('/', async (req, res) => {
     try {
@@ -60,12 +61,11 @@ app.listen(3001, () => {
 });
 
 // Selecting and sorting from database
-async function getCityAscending(cityName, stateName) {
-    const query = `SELECT col_monthly_total, name, state FROM cities WHERE name=$1 AND state=$2 ORDER BY col_monthly_total ASC;`;
-    const values = [cityName, stateName];
+async function getCityAscending() {
+    const query = `SELECT col_monthly_total, name, state FROM cities ORDER BY col_monthly_total ASC;`;
   
     try {
-      const result = await client.query(query, values);
+      const result = await client.query(query);
       return result.rows;
     } catch (error) {
       console.error('Error:', error);
@@ -73,3 +73,42 @@ async function getCityAscending(cityName, stateName) {
     }
   }
   
+  async function getJSON(city) {
+    const res = await client.query('SELECT COUNT(*) FROM cities WHERE name = $1 AND state = $2',
+    [city.split("-")[0], city.split("-")[1]]
+  );
+  const query = `SELECT app_data FROM cities WHERE name=$1 AND state=$2;`;
+  const values = [city.split("-")[0], city.split("-")[1]];
+
+  if (res.rows[0].count > 0) {
+    try {
+        const result = await client.query(query, values);
+        return result.rows;
+      } catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+    }
+
+else {
+    insertData(city)
+    try {
+        const result = await client.query(query, values);
+        return result.rows;
+      } catch (error) {
+        console.error('Error:', error);
+        throw error;
+      }
+}
+  }
+
+    // if not in database do call insert data function first to put in database then grab from database
+  insertData(city);
+  
+    
+
+  export {
+    insertData, 
+    getJSON,
+    getCityAscending
+  }
