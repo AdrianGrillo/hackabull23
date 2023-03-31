@@ -19,11 +19,14 @@ import {
   TableRow,
   Paper,
   Link,
+  Stack,
 } from "@mui/material";
 import Button from "@mui/material/Button";
 import React from "react";
 import GoogleMaps from "./GooglePlace";
 import theme from "@/styles/text-field-style";
+import JobCard from "./JobCard";
+import CityCompareTable from "./CityCompareTable";
 
 const states = [
   "al",
@@ -176,10 +179,10 @@ export default function Home() {
     <ul>
       {items
         ? items.map((item, index) => (
-            <li key={index}>
-              {item.Cost}: {item.Value}
-            </li>
-          ))
+          <li key={index}>
+            {item.Cost}: {item.Value}
+          </li>
+        ))
         : null}
     </ul>
   );
@@ -199,7 +202,7 @@ export default function Home() {
     str = str.trim();
     return str;
   };
-  
+
 
   const clearInputs = () => {
     setCity1Input("");
@@ -218,7 +221,7 @@ export default function Home() {
           minHeight: "100vh",
           justifyContent: "start",
           textAlign: "center",
-          paddingTop: 8,
+          paddingTop: "8rem",
         }}
       >
         <div className="flex column form">
@@ -243,182 +246,75 @@ export default function Home() {
               />
             </RadioGroup>
           </FormControl>
-          <div className="flex form">
+          <Grid container direction="column" alignItems="center" justifyContent="center" spacing={2}>
             {functionSelected === "col" ? (
-              <div className="flex">
-                <GoogleMaps setCurrentLocation={setCity1Input} />
-                <div style={{ marginLeft: 10, marginRight: 10 }}></div>
-                <GoogleMaps setCurrentLocation={setCity2Input} />
-              </div>
+              <Grid item xs={12} sm={12} md={8}>
+                <Grid container spacing={1} alignItems="center" justifyContent="space-around">
+                  <Grid item xs={12} sm={6}>
+                    <GoogleMaps setCurrentLocation={setCity1Input} />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <GoogleMaps setCurrentLocation={setCity2Input} />
+                  </Grid>
+                </Grid>
+              </Grid>
             ) : (
-              <div className="flex">
-                <TextField
-                  sx={[{ minWidth: 300 }, theme]}
-                  label="Enter a job"
-                  className="input"
-                  type="text"
-                  value={jobInput}
-                  onChange={(e) => handleJobInput(e)}
-                  contrast="true"
-                />
-                <div style={{ marginLeft: 10, marginRight: 10 }}></div>
-                <GoogleMaps setCurrentLocation={setCity2State} />
-              </div>
+              <Grid item xs={12} sm={12} md={8}>
+                <Grid container spacing={1} alignItems="center" justifyContent="space-around">
+                  <Grid item xs={12} sm={6}>
+                    <TextField
+                      sx={[{ minWidth: 300 }, theme]}
+                      label="Enter a job"
+                      className="input"
+                      type="text"
+                      value={jobInput}
+                      onChange={(e) => handleJobInput(e)}
+                      contrast="true"
+                    />
+                  </Grid>
+                  <Grid item xs={12} sm={6}>
+                    <GoogleMaps setCurrentLocation={setCity2State} />
+                  </Grid>
+                </Grid>
+              </Grid>
             )}
-            {functionSelected === "col" ? (
-              <Button variant="outlined" onClick={() => fetchCityData()}>
-                Search
-              </Button>
-            ) : (
-              <Button variant="outlined" onClick={() => fetchJobData()}>
-                Search
-              </Button>
-            )}
-          </div>
+            <Grid item xs={12} sm={12} md={8}>
+              {functionSelected === "col" ? (
+                <Button variant="outlined" onClick={() => fetchCityData()}>
+                  Search
+                </Button>
+              ) : (
+                <Button variant="outlined" onClick={() => fetchJobData()}>
+                  Search
+                </Button>
+              )}
+            </Grid>
+          </Grid>
         </div>
         <div className="flex column data">
           <div className="flex city-data">
             {searchDone &&
-            functionSelected === "col" &&
-            city1DataTransformed &&
-            city2DataTransformed ? (
-              <TableContainer component={Paper}>
-                <Table
-                  sx={{
-                    minWidth: 650,
-                    border: "1px solid",
-                    borderColor: "#ffd700",
-                    background: "rgb(226,226,226)",
-                  }}
-                  aria-label="city comparison table"
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableCell>Description</TableCell>
-                      <TableCell align="center">
-                        {city1DataTransformed["City Name"]},{" "}
-                        {city1DataTransformed["Country Name"]}
-                      </TableCell>
-                      <TableCell align="center">
-                        {city2DataTransformed["City Name"]},{" "}
-                        {city2DataTransformed["Country Name"]}
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sections.map((section, sectionIndex) =>
-                      city1DataTransformed[section] &&
-                      city2DataTransformed[section] ? (
-                        <React.Fragment key={sectionIndex}>
-                          <TableRow sx={{ background: "#f0f0f0" }}>
-                            <TableCell
-                              sx={{ background: "#022c43", color: "white" }}
-                              colSpan={3}
-                            >
-                              <strong>{section}</strong>
-                            </TableCell>
-                          </TableRow>
-                          {Object.entries(city1DataTransformed[section]).map(
-                            ([key, value], index) => (
-                              <TableRow
-                                key={key}
-                                sx={{
-                                  "&:last-child td, &:last-child th": {
-                                    border: 0,
-                                  },
-                                }}
-                              >
-                                <TableCell component="th" scope="row">
-                                  {key}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {value} {city1DataTransformed.Currency}
-                                </TableCell>
-                                <TableCell align="center">
-                                  {city2DataTransformed[section][key]}{" "}
-                                  {city2DataTransformed.Currency}
-                                </TableCell>
-                              </TableRow>
-                            )
-                          )}
-                        </React.Fragment>
-                      ) : null
-                    )}
-                  </TableBody>
-                </Table>
-              </TableContainer>
+              functionSelected === "col" &&
+              city1DataTransformed &&
+              city2DataTransformed ? (
+              <CityCompareTable
+                city1Data={city1DataTransformed}
+                city2Data={city2DataTransformed}
+                sections={sections}
+              />
             ) : null}
           </div>
           {functionSelected === "jobs" ? (
             <Grid container spacing={2}>
               {jobsData.map((job, index) => (
                 <Grid key={index} item xs={12} sm={6} md={4} lg={3}>
-                  <Card sx={{ width: 375, height: 400}}>
-                    <CardContent>
-                      <Typography
-                        variant="h5"
-                        component="div"
-                        gutterBottom
-                        sx={{
-                          fontSize: "16px",
-                          fontWeight: 600,
-                          color: "#ffd700",
-                          borderBottom: "1px solid black",
-                          py: 1,
-                        }}
-                      >
-                        {job.title}
-                      </Typography>
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mb: 1,
-                        }}
-                      >
-                        <b>Location: </b>
-                        {job.location}
-                      </Typography>
-                      <Typography
-                        variant="body1"
-                        component="div"
-                      >{stripHtmlTags(job.snippet.slice(0, 150))}</Typography>
-                      {console.log(job.snippet)}
-                      {job.company && (
-                        <Typography
-                          variant="body2"
-                          sx={{
-                            mb: 1,
-                          }}
-                        >
-                          <b>Company: </b>
-                          {job.company}
-                        </Typography>
-                      )}
-                      <Typography
-                        variant="body2"
-                        sx={{
-                          mb: 1,
-                        }}
-                      >
-                        <b>Posting: </b>
-                        <nav>
-                          <Link
-                            href={job.link}
-                            underline="hover"
-                            target="_blank"
-                          >
-                            {job.link}
-                          </Link>
-                        </nav>
-                      </Typography>
-                    </CardContent>
-                  </Card>
+                  <JobCard job={job} />
                 </Grid>
               ))}
             </Grid>
           ) : null}
         </div>
       </Box>
-    </Container>
+    </Container >
   );
 }

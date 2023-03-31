@@ -21,7 +21,7 @@ async function insertData(city) {
   }
     const response = await fetch(`https://zylalabs.com/api/226/cities+cost+of+living+and+average+prices+api/655/cost+of+living+by+city?country=united-states&city=${city}`, {
         headers: {
-            'Authorization': 'Bearer 1031|Cz5i9bS9RqlZNApWSMNzwHcpiQB2LgyXKoWDApoq'
+            'Authorization': 'Bearer 1061|2IlyusgBzo6yCMe9FZwd3dRrWn9QoCSocQaFJqZk'
         }
     });
     const data = await response.json();
